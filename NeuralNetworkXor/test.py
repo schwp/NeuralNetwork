@@ -18,4 +18,4 @@ if __name__ == "__main__":
     Xor.train()
 
     for a, b in X:
-        print(f'Performing {a} ^ {b} -> {Xor.predict([a, b])}')
+        print(f'Performing {a} ^ {b} -> {1 if Xor.predict([a, b]) > 0.5 else 0}')
