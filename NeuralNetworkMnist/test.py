@@ -4,16 +4,17 @@ from matplotlib import pyplot
 from NeuralNetworkMnist import NeuralNetworkMnist
 
 # For plotting and visualization pupose
-def plot_images(arr):
+def plot_images(arr, image_name):
     for i in range(9):  
         pyplot.subplot(330 + 1 + i)
         pyplot.imshow(arr[i], cmap='gray')
-        pyplot.savefig("figures.png")
+        pyplot.savefig(image_name)
 
 if __name__ == "__main__":
     print("=== MNIST NEURAL NETWORK TEST ===")
     (train_X, train_y), (test_X, test_y) = mnist.load_data()
-    plot_images(train_X)
+    plot_images(train_X, "train_images.png")
+    plot_images(test_X, "test_images.png")
 
     X = []
     for im in train_X:
@@ -29,9 +30,13 @@ if __name__ == "__main__":
         Y.append(arr)
     Y = np.array(Y)
     
-    nn = NeuralNetworkMnist(X[:1000], Y[:1000])
+    nn = NeuralNetworkMnist(X[:10000], Y[:10000], 0.0001)
     nn.train()
-    
-    # write the tests for number to guess
-    for i in range(10):
-        print(f'expected: {test_y[i]} | got: {nn.predict(test_X[i].flatten())}')
+
+    correct = 0
+    total = len(test_y)
+    for i in  range(total):
+        if test_y[i] == nn.predict(test_X[i].flatten())[0]:
+            correct += 1
+
+    print(f'Coverage: {round(correct * 100 / total)}% ({correct}/{total})')

@@ -12,11 +12,11 @@ class NeuralNetworkMnist:
         self.losses = []
 
         # # Weights and biases to get the hidden layer (input -> hidden)
-        self.hidden_weights = np.random.uniform(size=(inputs, hidden))
+        self.hidden_weights = np.random.randn(inputs, hidden) * np.sqrt(1 / inputs)
         self.hidden_biases = np.zeros((1, hidden))
 
         # Weights and biases to get the output layer (hidden -> output)
-        self.output_weights = np.random.uniform(size=(hidden, outputs))
+        self.output_weights = np.random.randn(hidden, outputs) * np.sqrt(1 / hidden)
         self.output_biases = np.zeros((1, outputs))
 
     """
@@ -26,7 +26,7 @@ class NeuralNetworkMnist:
     @return : value computed
     """
     def neuroneActivation(self, X):
-        return 1 / (1 + np.exp(-X))
+        return 1 / (1 + np.exp(-np.clip(X, -500, 500)))
     
     def neuroneActivationDerivative(self, X):
         return X * (1 - X)
@@ -94,10 +94,13 @@ class NeuralNetworkMnist:
     -> Train the Neural Network using the back and forward propagation
     """
     def train(self):
-        for _ in range(self.nb_iteration):
+        for i in range(self.nb_iteration):
             R, V = self.forwardPropagation(self.train_data)
             errorTerm = self.lossFunction(R)
             self.backPropagation(V, errorTerm)
+            
+            if i % 1000 == 0:
+                print(f"Iteration {i}, Loss: {np.sum(self.losses[-1])}")
 
     """
     Prediction function
